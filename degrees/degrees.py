@@ -100,19 +100,21 @@ def shortest_path(source, target):
         if q.empty(): break
 
         current_node = q.remove()
-        print("Looking at node:", current_node.state)
+        # print("Exploring node:", current_node.state) # delete me
         # check if we've found our target
         if current_node.state[1] == target:
-            print("Found node")
+            # print("Found node")
             path = [current_node.state]
             while current_node.parent != None:
                 current_node = current_node.parent
-                path.append(current_node.state)
+                if current_node.parent != None:
+                    path.append(current_node.state)
 
             return path
 
         # create and append children of current_node to q
         for s in movies[current_node.state[0]]["stars"]:
+            # print("Looking at star:", s) # delete me
             n = Node(state=(current_node.state[0], s),
                      parent=current_node, action=None)
             # TODO check if current node already exists
