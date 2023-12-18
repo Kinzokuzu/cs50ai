@@ -102,7 +102,6 @@ def shortest_path(source, target):
         curr_node = Q.remove()
         # check for target
         if curr_node.state[1] == target:
-            print("Found target")
             path = []
             while curr_node.parent != None:
                 path.append(curr_node.state)
