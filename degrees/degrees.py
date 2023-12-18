@@ -91,37 +91,31 @@ def shortest_path(source, target):
 
     If no possible path, returns None.
     """
-    q = QueueFrontier()
-    # create a new node and add to queue for each movie source has been a part of
-    for m in people[source]["movies"]:
-        q.add(Node(state=(m, source), parent=None, action=None))
+    Q = QueueFrontier()
+    V = {} # keep track of visited movies 
+    # initialize Q with nodes of movies source has been in
+    for movie in people[source]["movies"]:
+        Q.add(Node(state=(movie, source), parent=None, action=None))
+        V[movie] = True
 
-    while q:
-        if q.empty(): break
-
-        current_node = q.remove()
-        # print("Exploring node:", current_node.state) # delete me
-        # check if we've found our target
-        if current_node.state[1] == target:
-            # print("Found node")
-            path = [current_node.state]
-            while current_node.parent != None:
-                current_node = current_node.parent
-                if current_node.parent != None:
-                    path.append(current_node.state)
+    while not Q.empty():
+        curr_node = Q.remove()
+        # check for target
+        if curr_node.state[1] == target:
+            print("Found target")
+            path = []
+            while curr_node.parent != None:
+                path.append(curr_node.state)
+                curr_node = curr_node.parent
 
             return path
 
-        # create and append children of current_node to q
-        for s in movies[current_node.state[0]]["stars"]:
-            # print("Looking at star:", s) # delete me
-            n = Node(state=(current_node.state[0], s),
-                     parent=current_node, action=None)
-            # TODO check if current node already exists
-
-            q.add(n)
-
-    return None
+        for star in movies[curr_node.state[0]]["stars"]:
+            # create nodes for movies star has been in if they haven't been visited
+            for movie in people[star]["movies"]:
+                if movie not in V:
+                    Q.add(Node(state=(movie, star), parent=curr_node, action=None))
+                V[movie] = True
 
 
 def person_id_for_name(name):
