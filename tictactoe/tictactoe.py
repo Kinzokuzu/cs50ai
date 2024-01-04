@@ -28,7 +28,7 @@ def player(board):
     empty_count = 0
     for r in range(3):
         for c in range(3):
-            if board[r][c] == None:
+            if board[r][c] == EMPTY:
                 empty_count += 1
 
     # even # of EMPTY's denotes player 'O' has just moved
@@ -43,7 +43,7 @@ def actions(board):
     possible_actions = set()
     for r in range(3): # rows
         for c in range(3): # colomns
-            if board[r][c] == None:
+            if board[r][c] == EMPTY:
                 # add (r, c) as a tuple
                 possible_actions.add((r, c))
 
