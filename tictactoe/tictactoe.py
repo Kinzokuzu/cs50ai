@@ -9,7 +9,6 @@ import copy
 X = "X"
 O = "O"
 EMPTY = None
-INFINITY = 999
 
 
 def initial_state():
@@ -115,17 +114,25 @@ def minimax(board):
     """
     if terminal(board): return None
 
-    best_move = (-1, -1)
+    best_move = None
     if player(board) == X:
-        move_utility = -INFINITY
+        move_utility = -math.inf
         for action in actions(board):
-            if (max_value(result(board, action)) > move_utility):
+            # if the next moves minimum utility is greater than the last, then the
+            # next move is better
+            min_val = min_value(result(board, action))
+            if min_val > move_utility:
                 best_move = action
+                move_utility = min_val
     else: # O player
-        move_utility = INFINITY
+        move_utility = math.inf
         for action in actions(board):
-            if (min_value(result(board, action)) < move_utility):
+            # if the next moves maximum utility is less than the last, then the
+            # next move is better
+            max_val = max_value(result(board, action))
+            if max_val < move_utility:
                 best_move = action
+                move_utility = max_val
 
     return best_move
 
@@ -136,7 +143,7 @@ def max_value(board):
     """
     if terminal(board): return utility(board)
 
-    max_val = -INFINITY
+    max_val = -math.inf
     for action in actions(board):
         max_val = max(max_val, min_value(result(board, action)))
 
@@ -149,7 +156,7 @@ def min_value(board):
     """
     if terminal(board): return utility(board)
 
-    min_val = INFINITY
+    min_val = math.inf
     for action in actions(board):
         min_val = min(min_val, max_value(result(board, action)))
 
