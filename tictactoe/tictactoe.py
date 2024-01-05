@@ -4,6 +4,7 @@ Tic Tac Toe Player
 
 import math
 import copy
+import random
 
 # possible moves
 X = "X"
@@ -113,6 +114,10 @@ def minimax(board):
     Returns the optimal action for the current player on the board.
     """
     if terminal(board): return None
+
+    # best opening is any corner, so we can hard code that here
+    if board == initial_state():
+        return random.choice([(0,0), (0,2), (2,0), (2,2)])
 
     best_move = None
     if player(board) == X:
