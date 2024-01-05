@@ -9,6 +9,7 @@ import copy
 X = "X"
 O = "O"
 EMPTY = None
+INFINITY = 999
 
 
 def initial_state():
@@ -31,9 +32,9 @@ def player(board):
             if board[r][c] == EMPTY:
                 empty_count += 1
 
-    # even # of EMPTY's denotes player 'O' has just moved
-    if empty_count % 2 == 1: return 'X'
-    return 'O'
+    # even # of EMPTY's denotes player O has just moved
+    if empty_count % 2 == 1: return X
+    return O
 
 
 def actions(board):
@@ -74,17 +75,17 @@ def winner(board):
     """
     # check row wins
     for r in range(3):
-        if (board[r][0] == board[r][1] == board[r][2] == 'X'): return 'X'
-        if (board[r][0] == board[r][1] == board[r][2] == 'O'): return 'O'
+        if (board[r][0] == board[r][1] == board[r][2] == X): return X
+        if (board[r][0] == board[r][1] == board[r][2] == O): return O
     # check column wins
     for c in range(3):
-        if (board[0][c] == board[1][c] == board[2][c] == 'X'): return 'X'
-        if (board[0][c] == board[1][c] == board[2][c] == 'O'): return 'O'
+        if (board[0][c] == board[1][c] == board[2][c] == X): return X
+        if (board[0][c] == board[1][c] == board[2][c] == O): return O
     # check diagonal wins
-    if (board[0][0] == board[1][1] == board[2][2] == 'X'): return 'X'
-    if (board[0][0] == board[1][1] == board[2][2] == 'O'): return 'O'
-    if (board[0][2] == board[1][1] == board[2][0] == 'X'): return 'X'
-    if (board[0][2] == board[1][1] == board[2][0] == 'O'): return 'O'
+    if (board[0][0] == board[1][1] == board[2][2] == X): return X
+    if (board[0][0] == board[1][1] == board[2][2] == O): return O
+    if (board[0][2] == board[1][1] == board[2][0] == X): return X
+    if (board[0][2] == board[1][1] == board[2][0] == O): return O
 
     return None
 
@@ -93,8 +94,9 @@ def terminal(board):
     """
     Returns True if game is over, False otherwise.
     """
-    if winner(board): return True
-    return False
+    if winner(board) == X or winner(board) == O: return True
+    elif actions(board): return False
+    else: return True
 
 
 def utility(board):
@@ -102,11 +104,53 @@ def utility(board):
     Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
     """
     our_winner = winner(board)
-    if our_winner == 'X': return 1
-    if our_winner == 'O': return -1
+    if our_winner == X: return 1
+    if our_winner == O: return -1
     return 0
+
 
 def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
+    if terminal(board): return None
+
+    best_move = (-1, -1)
+    if player(board) == X:
+        move_utility = -INFINITY
+        for action in actions(board):
+            if (max_value(result(board, action)) > move_utility):
+                best_move = action
+    else: # O player
+        move_utility = INFINITY
+        for action in actions(board):
+            if (min_value(result(board, action)) < move_utility):
+                best_move = action
+
+    return best_move
+
+
+def max_value(board):
+    """
+    Returns the maximum utility from min_value(result(board, action))
+    """
+    if terminal(board): return utility(board)
+
+    max_val = -INFINITY
+    for action in actions(board):
+        max_val = max(max_val, min_value(result(board, action)))
+
+    return max_val
+
+
+def min_value(board):
+    """
+    Returns the minimum utility from max_value(result(board, action))
+    """
+    if terminal(board): return utility(board)
+
+    min_val = INFINITY
+    for action in actions(board):
+        min_val = min(min_val, max_value(result(board, action)))
+
+    return min_val
