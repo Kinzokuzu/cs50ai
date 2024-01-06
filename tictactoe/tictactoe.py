@@ -32,7 +32,8 @@ def player(board):
             if board[r][c] == EMPTY:
                 empty_count += 1
 
-    # even # of EMPTY's denotes player O has just moved
+    # an odd number of EMPTY's means there has been an even (or zero)
+    # number of moves, aka player O just moved or the board is empty
     if empty_count % 2 == 1: return X
     return O
 
@@ -55,7 +56,8 @@ def result(board, action):
     """
     Returns the board that results from making move (i, j) on the board.
     """
-    # check for valid aciton
+    # check for valid aciton.  I originally tried to check if the space was
+    # empty but this resulted in an error sometimes
     if action not in actions(board):
         raise NameError("Invalid action")
 
@@ -95,7 +97,7 @@ def terminal(board):
     Returns True if game is over, False otherwise.
     """
     if winner(board) == X or winner(board) == O: return True
-    elif actions(board): return False
+    elif actions(board): return False # still actions left
     else: return True
 
 
@@ -115,26 +117,29 @@ def minimax(board):
     """
     if terminal(board): return None
 
-    # best opening is any corner, so we can hard code that here
+    # best opening for X is in any corner, so we can hard code that here
     if board == initial_state():
         return random.choice([(0,0), (0,2), (2,0), (2,2)])
+    # the best opening for O is in the center, so that could also be hard coded
 
-    best_move = None
+    best_move = None 
     if player(board) == X:
         move_utility = -math.inf
         for action in actions(board):
-            # if the next moves minimum utility is greater than the last, then the
-            # next move is better
+            # player X can asume player O will pick their optimal move
             min_val = min_value(result(board, action))
+            # if the next moves minimum utility is greater than the last, then the
+            # next move is better for player X
             if min_val > move_utility:
                 best_move = action
                 move_utility = min_val
     else: # O player
         move_utility = math.inf
         for action in actions(board):
-            # if the next moves maximum utility is less than the last, then the
-            # next move is better
+            # player O can asume player X will pick their optimal move
             max_val = max_value(result(board, action))
+            # if the next moves maximum utility is less than the last, then the
+            # next move is better for player O
             if max_val < move_utility:
                 best_move = action
                 move_utility = max_val

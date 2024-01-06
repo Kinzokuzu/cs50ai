@@ -95,13 +95,16 @@ def shortest_path(source, target):
     V = {} # keep track of visited movies 
     # initialize Q with nodes of movies source has been in
     for movie in people[source]["movies"]:
+        # node.state is the tuple (movie, star)
         Q.add(Node(state=(movie, source), parent=None, action=None))
         V[movie] = True
 
+    # search through queue
     while not Q.empty():
         curr_node = Q.remove()
         # check for target
         if curr_node.state[1] == target:
+            # backtrack to root node
             path = []
             while curr_node.parent != None:
                 path.append(curr_node.state)
