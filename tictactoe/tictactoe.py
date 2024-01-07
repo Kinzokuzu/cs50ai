@@ -121,6 +121,7 @@ def minimax(board):
     if board == initial_state():
         return random.choice([(0,0), (0,2), (2,0), (2,2)])
     # the best opening for O is in the center, so that could also be hard coded
+    # but is not necessary since the computer always selects this move
 
     best_move = None 
     if player(board) == X:
